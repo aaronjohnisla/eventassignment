@@ -26,64 +26,219 @@ export function AdminDashboard() {
   }, [])
 
   const cards = [
-    { label: 'Total Events', value: stats.events, icon: Calendar, color: 'var(--primary-light)', bg: 'rgba(45,106,63,0.15)' },
-    { label: 'Registered Users', value: stats.users, icon: Users, color: '#5dade2', bg: 'rgba(41,128,185,0.15)' },
-    { label: 'Total Registrations', value: stats.registrations, icon: Ticket, color: 'var(--accent)', bg: 'rgba(201,168,76,0.15)' },
-    { label: 'Checked In', value: stats.checkins, icon: TrendingUp, color: '#27ae60', bg: 'rgba(39,174,96,0.15)' },
+    { label: 'Total Events', value: stats.events, icon: Calendar, color: '#60a5fa', bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.2)' },
+    { label: 'Registered Users', value: stats.users, icon: Users, color: '#a78bfa', bg: 'rgba(139,92,246,0.12)', border: 'rgba(139,92,246,0.2)' },
+    { label: 'Total Registrations', value: stats.registrations, icon: Ticket, color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.2)' },
+    { label: 'Checked In', value: stats.checkins, icon: TrendingUp, color: '#4ade80', bg: 'rgba(74,222,128,0.12)', border: 'rgba(74,222,128,0.2)' },
   ]
 
   return (
-    <div className="fade-in">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
-        <div>
-          <h1 style={{ fontSize: 28, marginBottom: 4 }}>Dashboard</h1>
-          <p style={{ color: 'var(--text2)' }}>Overview of campus event activity</p>
-        </div>
-        <Link to="/admin/events/create" className="btn btn-accent">
-          <Plus size={16} /> Create Event
-        </Link>
-      </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 32 }}>
-        {cards.map(({ label, value, icon: Icon, color, bg }) => (
-          <div key={label} className="card" style={{ padding: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Icon size={18} color={color} />
-              </div>
-              <span style={{ fontSize: 13, color: 'var(--text2)' }}>{label}</span>
-            </div>
-            <div style={{ fontSize: 32, fontFamily: 'Syne', fontWeight: 700 }}>
-              {loading ? <span className="spinner" style={{ width: 24, height: 24 }} /> : value}
-            </div>
+        .ad-wrap { font-family: 'IBM Plex Sans', sans-serif !important; }
+
+        .ad-title {
+          font-family: 'Space Grotesk', sans-serif !important;
+          font-size: 26px !important;
+          font-weight: 700 !important;
+          color: #fff !important;
+          letter-spacing: -0.5px !important;
+          margin-bottom: 4px !important;
+        }
+
+        .ad-subtitle {
+          font-size: 13px !important;
+          color: rgba(255,255,255,0.35) !important;
+          font-weight: 300 !important;
+        }
+
+        .ad-create-btn {
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 8px !important;
+          padding: 10px 18px !important;
+          background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
+          border: none !important;
+          border-radius: 10px !important;
+          color: #fff !important;
+          font-family: 'Space Grotesk', sans-serif !important;
+          font-size: 13px !important;
+          font-weight: 600 !important;
+          cursor: pointer !important;
+          text-decoration: none !important;
+          transition: opacity 0.2s, transform 0.15s !important;
+        }
+        .ad-create-btn:hover { opacity: 0.88 !important; transform: translateY(-1px) !important; }
+
+        .ad-stat-card {
+          padding: 20px !important;
+          border-radius: 14px !important;
+          background: rgba(255,255,255,0.03) !important;
+          border: 0.5px solid rgba(255,255,255,0.07) !important;
+          transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s !important;
+          cursor: default !important;
+        }
+        .ad-stat-card:hover {
+          transform: translateY(-3px) !important;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important;
+        }
+
+        .ad-stat-icon {
+          width: 40px !important; height: 40px !important;
+          border-radius: 10px !important;
+          display: flex !important; align-items: center !important; justify-content: center !important;
+        }
+
+        .ad-stat-label {
+          font-size: 12px !important;
+          color: rgba(255,255,255,0.35) !important;
+          font-weight: 300 !important;
+        }
+
+        .ad-stat-value {
+          font-family: 'Space Grotesk', sans-serif !important;
+          font-size: 34px !important;
+          font-weight: 700 !important;
+          color: #fff !important;
+          letter-spacing: -1px !important;
+          margin-top: 10px !important;
+        }
+
+        .ad-recent-card {
+          background: rgba(255,255,255,0.02) !important;
+          border: 0.5px solid rgba(255,255,255,0.07) !important;
+          border-radius: 14px !important;
+          padding: 20px !important;
+        }
+
+        .ad-recent-title {
+          font-family: 'Space Grotesk', sans-serif !important;
+          font-size: 15px !important;
+          font-weight: 600 !important;
+          color: #fff !important;
+          margin: 0 !important;
+        }
+
+        .ad-view-all {
+          font-size: 12px !important;
+          color: #60a5fa !important;
+          text-decoration: none !important;
+          font-weight: 500 !important;
+        }
+
+        .ad-event-row {
+          display: flex !important;
+          align-items: center !important;
+          gap: 16px !important;
+          padding: 12px 14px !important;
+          background: rgba(255,255,255,0.02) !important;
+          border: 0.5px solid rgba(255,255,255,0.05) !important;
+          border-radius: 10px !important;
+          transition: transform 0.18s, border-color 0.18s, background 0.18s !important;
+          cursor: default !important;
+        }
+        .ad-event-row:hover {
+          transform: translateX(4px) !important;
+          border-color: rgba(59,130,246,0.25) !important;
+          background: rgba(59,130,246,0.04) !important;
+        }
+
+        .ad-event-month {
+          font-size: 10px !important;
+          color: #60a5fa !important;
+          font-weight: 600 !important;
+          letter-spacing: 1px !important;
+        }
+
+        .ad-event-day {
+          font-family: 'Space Grotesk', sans-serif !important;
+          font-size: 20px !important;
+          font-weight: 700 !important;
+          color: #fff !important;
+          line-height: 1.1 !important;
+        }
+
+        .ad-event-title {
+          font-size: 13px !important;
+          font-weight: 500 !important;
+          color: rgba(255,255,255,0.85) !important;
+          margin: 0 !important;
+        }
+
+        .ad-event-sub {
+          font-size: 11px !important;
+          color: rgba(255,255,255,0.25) !important;
+          font-weight: 300 !important;
+          margin: 0 !important;
+        }
+
+        .ad-badge {
+          font-size: 10px !important;
+          font-weight: 500 !important;
+          padding: 3px 10px !important;
+          border-radius: 100px !important;
+          white-space: nowrap !important;
+        }
+        .ad-badge-published { background: rgba(74,222,128,0.12) !important; color: #4ade80 !important; border: 0.5px solid rgba(74,222,128,0.25) !important; }
+        .ad-badge-draft { background: rgba(255,255,255,0.06) !important; color: rgba(255,255,255,0.4) !important; border: 0.5px solid rgba(255,255,255,0.1) !important; }
+        .ad-badge-cancelled { background: rgba(239,68,68,0.12) !important; color: #f87171 !important; border: 0.5px solid rgba(239,68,68,0.25) !important; }
+        .ad-badge-completed { background: rgba(59,130,246,0.12) !important; color: #60a5fa !important; border: 0.5px solid rgba(59,130,246,0.25) !important; }
+      `}</style>
+
+      <div className="ad-wrap fade-in">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
+          <div>
+            <div className="ad-title">Dashboard</div>
+            <div className="ad-subtitle">Overview of campus event activity</div>
           </div>
-        ))}
-      </div>
-
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h2 style={{ fontSize: 18 }}>Recent Events</h2>
-          <Link to="/admin/events" style={{ color: 'var(--accent)', fontSize: 13 }}>View all →</Link>
+          <Link to="/admin/events/create" className="ad-create-btn">
+            <Plus size={15} /> Create Event
+          </Link>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {recentEvents.map(event => (
-            <div key={event.id} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '12px 16px', background: 'var(--bg3)', borderRadius: 'var(--radius-sm)' }}>
-              <div style={{ textAlign: 'center', minWidth: 44 }}>
-                <div style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 600 }}>{format(new Date(event.event_date), 'MMM').toUpperCase()}</div>
-                <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.2 }}>{format(new Date(event.event_date), 'd')}</div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
+          {cards.map(({ label, value, icon: Icon, color, bg, border }) => (
+            <div key={label} className="ad-stat-card" style={{ borderColor: border }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+                <div className="ad-stat-icon" style={{ background: bg }}>
+                  <Icon size={18} color={color} />
+                </div>
+                <span className="ad-stat-label">{label}</span>
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 500 }}>{event.title}</div>
-                <div style={{ fontSize: 13, color: 'var(--text3)' }}>{event.location} · {event.event_time}</div>
+              <div className="ad-stat-value">
+                {loading ? <span className="spinner" style={{ width: 24, height: 24 }} /> : value}
               </div>
-              <span className={`badge badge-${event.status}`}>{event.status}</span>
             </div>
           ))}
-          {!loading && recentEvents.length === 0 && (
-            <p style={{ color: 'var(--text3)', textAlign: 'center', padding: 20 }}>No events yet</p>
-          )}
+        </div>
+
+        <div className="ad-recent-card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, paddingBottom: 12, borderBottom: '0.5px solid rgba(255,255,255,0.06)' }}>
+            <div className="ad-recent-title">Recent Events</div>
+            <Link to="/admin/events" className="ad-view-all">View all →</Link>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {recentEvents.map(event => (
+              <div key={event.id} className="ad-event-row">
+                <div style={{ textAlign: 'center', minWidth: 44 }}>
+                  <div className="ad-event-month">{format(new Date(event.event_date), 'MMM').toUpperCase()}</div>
+                  <div className="ad-event-day">{format(new Date(event.event_date), 'd')}</div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div className="ad-event-title">{event.title}</div>
+                  <div className="ad-event-sub">{event.location} · {event.event_time}</div>
+                </div>
+                <span className={`ad-badge ad-badge-${event.status}`}>{event.status}</span>
+              </div>
+            ))}
+            {!loading && recentEvents.length === 0 && (
+              <p style={{ color: 'rgba(255,255,255,0.2)', textAlign: 'center', padding: 20, fontSize: 13 }}>No events yet</p>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
